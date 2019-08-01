@@ -1,0 +1,19 @@
+{
+  "name": "turing/tax",
+  "description": "Tax module",
+  "type": "Module",
+  "repositories": [
+  ],
+  "authors": [
+    {
+      "name": "DC Fynn",
+      "email": "derick.cornelius.fynn@gmail.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Turing\\Tax\\": "src/"
+    }
+  }
+}
