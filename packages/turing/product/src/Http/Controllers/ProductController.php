@@ -17,7 +17,6 @@ class ProductController extends BaseController
         /** @var \Illuminate\Pagination\LengthAwarePaginator|Paginator $pagination */
         $pagination = $this->repository->collection(collect($this->request->toArray()));
         $collection = $pagination->getCollection();
-        \Log::info(print_r($pagination->total(),1));
         $count = $pagination->total();
         $rows = $collection;
 
@@ -64,22 +63,25 @@ class ProductController extends BaseController
         return $this->respondeWithResource($response);
     }
 
-    public function locations(int $id){
+    public function locations(int $id)
+    {
         $collection = $this->repository->locations($id);
         return $this->respondeWithResource($collection);
     }
 
-    public function reviews(int $id){
+    public function reviews(int $id)
+    {
         $collection = $this->repository->reviews($id);
         return $this->respondeWithResource($collection);
     }
 
-    public function review(int $id){
+    public function review(int $id)
+    {
         $model = \JWTAuth::parseToken()->authenticate();
         $data = collect($this->request->toArray());
-        $data->put('customer_id' , $model->customer_id);
+        $data->put('customer_id', $model->customer_id);
         $data->put('product_id', $id);
-        $collection = $this->repository->review($id,$data);
+        $this->repository->review($id, $data);
         return response("");
     }
 }
