@@ -54,7 +54,12 @@ class ShippingRepository implements RepositoryInterface
      */
     public function getRegionsByShippingRegionId(int $id)
     {
-        return $this->model->with('shippings')->find($id)->shippings;
+        return $this->model->with('shippings')->findOrFail($id)->shippings;
+    }
+
+    public function getShipping(int $id)
+    {
+        return Shipping::findOrFail($id);
     }
 
     /**

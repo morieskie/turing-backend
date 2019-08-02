@@ -28,4 +28,13 @@ class ShippingController extends BaseController
     {
         return $this->respondWithResourceCollection($this->repository->getRegionsByShippingRegionId($id, collect($this->request->toArray())));
     }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getShipping(int $id)
+    {
+        return $this->respondeWithResource($this->repository->getShipping($id, collect($this->request->toArray())));
+    }
 }

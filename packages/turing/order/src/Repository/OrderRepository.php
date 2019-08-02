@@ -12,6 +12,8 @@ use Turing\Backend\Repository\RepositoryInterface;
 use Turing\Cart\Repository\CartRepository;
 use Turing\Customer\Repository\CustomerRepository;
 use Turing\Order\Model\Order;
+use Turing\Shipping\Repository\ShippingRepository;
+use Turing\Tax\Repository\TaxRepository;
 
 /**
  * Class OrderRepository
@@ -61,6 +63,20 @@ class OrderRepository implements RepositoryInterface
      * @param Collection|null $filters
      * @return Collection
      */
+    public function getOrder(int $id, Collection $filters = null): Model
+    {
+        return $this->model->with(['items' => function ($query) {
+            $query->with('product');
+            return $query->select('order_id', 'product_id', 'attributes', 'product_name', 'quantity',
+                'unit_cost', \DB::raw("(quantity * unit_cost) AS subtotal"));
+        }, 'shipping', 'tax'])->findOrFail($id);
+    }
+
+    /**
+     * @param int $id
+     * @param Collection|null $filters
+     * @return Collection
+     */
     public function summary(int $id, Collection $filters = null): Model
     {
         return $this->model
@@ -101,9 +117,22 @@ SQL;
         /** @var CartRepository $cartRepository */
         $cartRepository = app(CartRepository::class);
 
+        /** @var TaxRepository $taxRepository */
+        $taxRepository = app(TaxRepository::class);
+        $tax = $taxRepository->item($data->get('tax_id'));
+
+        /** @var ShippingRepository $cartRepository */
+        $shippingRepository = app(ShippingRepository::class);
+        $shipping = $shippingRepository->getShipping($data->get('shipping_id'));
+
+        $subtotal = $cartRepository->getCartTotal($cartId)->total_amount + floatval($shipping->shipping_cost);
+        $estimatedTax = ($subtotal) * $tax->tax_percentage / 100;
+        $totalAmount = $subtotal + $estimatedTax;
+
+
         /** @var Order|Model $orderModel */
         $orderModel = $this->model->create([
-            'total_amount' => $cartRepository->getCartTotal($cartId)->total_amount,
+            'total_amount' => $totalAmount,
             'customer_id' => $data->get('customer_id'),
             'shipping_id' => $data->get('shipping_id'),
             'tax_id' => $data->get('tax_id'),

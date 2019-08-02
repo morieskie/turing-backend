@@ -27,6 +27,11 @@ class OrderController extends BaseController
         return $this->respondeWithResource($this->repository->details($id, collect($this->request->toArray())));
     }
 
+    public function getOrder(int $id)
+    {
+        return $this->respondeWithResource($this->repository->getOrder($id, collect($this->request->toArray())));
+    }
+
     public function showShortDetail(int $id)
     {
         return $this->respondeWithResource($this->repository->summary($id, collect($this->request->toArray())));

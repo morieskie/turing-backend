@@ -27,3 +27,8 @@ Route::get('/shipping/regions', function (BaseFormRequest $request) {
 Route::get('/shipping/regions/{shippingRegionId}', function (BaseFormRequest $request, int $shippingRegionId) {
     return app(ShippingController::class)->show($shippingRegionId);
 });
+
+// Get shipping
+Route::get('/shipping/{shippingId}', function (BaseFormRequest $request, int $shippingId) {
+    return app(ShippingController::class)->getShipping($shippingId);
+});

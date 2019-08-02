@@ -14,6 +14,10 @@ Route::get('orders/{orderId}', function(BaseFormRequest $request, int $orderId){
     return app(OrderController::class)->show($orderId);
 })->middleware('jwt.verify')->where('orderId', '[0-9]+');
 
+Route::get('orders/{orderId}/detailed', function(BaseFormRequest $request, int $orderId){
+    return app(OrderController::class)->getOrder($orderId);
+})->middleware('jwt.verify')->where('orderId', '[0-9]+');
+
 
 Route::get('orders/inCustomer', 'OrderController@customerOrders')->middleware('jwt.verify');
 
